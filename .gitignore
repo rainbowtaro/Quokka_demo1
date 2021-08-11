@@ -2,6 +2,9 @@
 node_modules
 /dist
 
+# version管理
+.node-version
+
 
 # local env files
 .env.local
