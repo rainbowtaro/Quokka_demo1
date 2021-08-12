@@ -6,21 +6,26 @@
       style="width: 2000px; height: 2000px; border: 1px solid gray;position:center;" 
       :dataset="FirstVideo"
       :config="treeConfig"
-      :linkStyle="straight"
+      :collapse-enabled="collapse_enabled"
     >
       <template v-slot:node="{ node, collapsed }">
         <div 
           class="Video-node"
           :style="{ border: collapsed ? '2px solid grey' : '' }">
-          <span style="padding: 4px 0; font-weight: bold;">
-            {{ node.id }}
-          </span>
+
+          <!-- ビデオ表示部分 -->
           <video
             width="180" height="130" 
             controls v-bind:src="node.video">
           </video>
-          <a target="_blank" v-bind:href="PageURL" class="btn btn--yellow btn--circle"><span class="mgr1" >＋</span></a>
+
+          <!-- +ボタン -->
+          <a target="_blank" class="btn btn--yellow btn--circle" @click="addVideo(node)"><span class="mgr1" >＋</span></a>
+
+          <!-- detailボタン -->
           <div id="detail"><button v-on:click="DETAIL">Detail</button></div>
+
+          <!-- modal -->
           <modal name="hello-world" :draggable="true" :resizable="true">
             <div class="modal-header">
               <h2>Modal title</h2>
@@ -45,23 +50,22 @@ export default {
     return {
       PageURL:'https://qiita.com/s_yasunaga/items/05e56fad4631f7bc7fe9',
       FirstVideo: {
-        id: '0',
+        id: '1',
         video:'../system.mp4',
         children: [
           {
-
-            id: '1',
+            id: '1.2',
             video:'',
             detail:'',
             children:[],
           },
           {
-            id: '2',
+            id: '1.3',
             video:'',
             detail:'',
             children: [
               {
-                id: '2.1',
+                id: '1.3.4',
                 video:'',
                 detail:'',
                 children:[],
@@ -70,7 +74,9 @@ export default {
           },
         ]
       },
-      treeConfig: { nodeWidth: 250, nodeHeight: 150, levelHeight: 300 }
+      treeConfig: { nodeWidth: 250, nodeHeight: 150, levelHeight: 300 },
+      collapse_enabled: false,
+      nextNodeNumber: 5
     }
   },
   methods:{
@@ -79,8 +85,52 @@ export default {
     },
     hide : function () {
       this.$modal.hide('hello-world');
-    }
+    },
+    addVideo(node){
+
+      // 新しく追加されるNode
+      const newNode = {
+        parent: node.id,
+        id: this.nextNodeId,
+        video: '../system.mp4',
+        detail: '',
+        children: []
+      }
+
+      // 次に作成されるNodeにつけるNumberの更新
+      this.nextNodeNumber += this.nextNodeNumber;
+
+      /* idによって追加する位置を変える
+
+      // オブジェクトパスを変数に保存
+      const ids = node.id.split('.');
+      let nowPosition = this.FirstVideo;
+      const check = 'children';
+      console.log(nowPosition);
+      for(let i=0; i<=ids.length; i++){
+        // iと配列の長さが同じ -> そこが終着
+        if(i===ids.length){
+          this.FirstVideo[check].push(newNode);
+          break;
+        }
+        for(let j=0; j<nowPosition.children.length; j++){
+          // idが同じかどうか(正確にはidの１つの文字)
+          if(ids[i] === this.FirstVideo){
+            console.log('hoge')
+          }
+        }
+      }
+
+      */
+
+     this.FirstVideo.children.push(newNode);
+     console.log(this.FirstVideo.children);
+
+
+    },
   },
+  computed: {
+  }
 }
 </script>
 
